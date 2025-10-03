@@ -1,0 +1,7 @@
+logging:
+  filename: app.log
+
+
+documents:
+  folderpath: /home/user/Projects/AdvancedRagChatbot/data
+
