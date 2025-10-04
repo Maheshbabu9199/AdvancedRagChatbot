@@ -19,16 +19,19 @@ class VectorDBQdrant:
         self.collection_name = os.getenv('QDRANT_COLLECTION_NAME', 'Wikipedia_collection')
         self.embedding_dimension = 384  # Dimension for 'all-MiniLM-L6-v2' model
         self.client = QdrantClient(host=self.qdrant_host, port=self.qdrant_port)
-        self._ensure_collection()
+        self.__ensure_collection()
 
 
-    def _ensure_collection(self):
+    def __ensure_collection(self):
+        """
+        checks whether the collection exists, if not create new one with predefined name.
+        """
         try:
             if not self.client.get_collection(self.collection_name):
                 self.client.recreate_collection(
                     collection_name=self.collection_name,
-                    vectors=models.VectorParams(size=self.embedding_dimension, distance=models.Distance.COSINE)
-                )
+                    vectors=models.VectorParams(size=self.embedding_dimension, distance=models.Distance.COSINE))
+                
                 logger.info(f"Created new collection: {self.collection_name}")
             else:
                 logger.info(f"Collection {self.collection_name} already exists.")
@@ -38,14 +41,23 @@ class VectorDBQdrant:
 
 
     async def upsert_embeddings(self, documents: list[Document], embeddings: list[torch.Tensor]):
+        """
+        adds the embeddings, documents to the vector db.
+
+        args:
+            documents (list[Document])  :  list of documents 
+            embeddings (list[torch.Tensor]) : list of embeddings 
+
+        returns:
+            None
+        """
         try:
             points = []
             for doc, emb in zip(documents, embeddings):
                 point = models.PointStruct(
                     id=doc.metadata['chunk_index'],
                     vector=emb.tolist(),
-                    payload=doc.metadata.update({'content': doc.page_content})
-                )
+                    payload=doc.metadata.update({'content': doc.page_content}))
                 points.append(point)
 
             self.client.upsert(

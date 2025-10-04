@@ -25,12 +25,23 @@ class DocumentsChunker:
     
 
     async def chunk_documents(self, scraped_data: list[dict]):
+        """
+        scraped_data contains list of dictionaries each with title, url, heading, subheading, content.
+        for each dict here, we are performing recursivechunking on content and appending the remaining details as metadata
+        for the chunks generated with each dictionary.
+
+        args:
+            scraped_data (list[dict]) : scraped_data
+        
+        returns:
+            documents (list[Document]) : list of chunked documents of type Document
+        """
         try:
             self.documents = []
 
             for item in scraped_data:
                 text = item['content']
-                chunks = self.text_splitter.split_text(text)
+                chunks = self.text_splitter.split_text(text)  # performing recursivetextchunking on the content
                 metadata = {
                     'url': item['url'],
                     'title': item['title'],
@@ -40,7 +51,7 @@ class DocumentsChunker:
                 for chunk in chunks:
                     doc_metadata = metadata.copy()
                     doc_metadata['chunk_index'] = str(uuid.uuid4())
-                    self.documents.append(Document(page_content=chunk, metadata=doc_metadata))
+                    self.documents.append(Document(page_content=chunk, metadata=doc_metadata))  # creating Documents with the metadata, chunks
 
             return self.documents
 

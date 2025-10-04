@@ -21,6 +21,15 @@ class DocumentsEmbedding:
 
 
     async def generate_embeddings(self, documents: list[Document]):
+        """ 
+        encodes the documents with model defined in the constructor.
+
+        args:
+            documents (list[Document]) : list of documents
+        
+        returns:
+            embeddings (list[torch.Tensor]) : list of embeddings
+        """
         try:
             texts = [doc.page_content for doc in documents]
             embeddings = self.model.encode(texts, convert_to_tensor=True, show_progress_bar=True)
