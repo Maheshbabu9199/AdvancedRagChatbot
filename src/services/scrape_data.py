@@ -8,6 +8,7 @@ import os
 
 logger = Logger.getLogger(__name__)
 
+
 class ScrapeData:
 
     def finalize_chunk(self, current_content: str, current_h1: str, current_h2: str, current_h3: str, current_h4: str, title: str, url: str, depth: int, documents: List[Dict[str, Any]]):
@@ -99,6 +100,8 @@ class ScrapeData:
         return documents, title
     
     async def scrape_single_url(self, url: str, browser: Browser):
+        """
+        """
         page = await browser.new_page()
         logger.info(f"🔹 Scraping {url}")
         docs, title = await self.parse_wikipedia_page(page, url)
@@ -108,6 +111,8 @@ class ScrapeData:
 
 
     async def scrape_wikipedia_pages(self, urls: List[str]) -> List[Dict[str, Any]]:
+        """
+        """
         results = []
         async with async_playwright() as pw:
             browser = await pw.chromium.launch(headless=True)

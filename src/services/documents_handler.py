@@ -3,11 +3,10 @@ from src.utilities.constants import ConstantsFetcher
 from src.services.documents_chunker import DocumentsChunker
 from src.utilities.vectordb_qdrant import VectorDBQdrant
 from src.services.documents_embedding import DocumentsEmbedding
-import os 
+import os
 
 
 logger = Logger().getLogger(__name__)
-
 
 
 class DocumentsHandler:
@@ -31,3 +30,6 @@ class DocumentsHandler:
         except Exception as exec:
             logger.error(f"Error in processing documents: {exec}")
             raise exec
+        
+
+  
